@@ -1,0 +1,57 @@
+[
+  {
+    "id": "a1b2c3d4-0001-0001-0001-000000000001",
+    "studentId": "STU001",
+    "type": "Placement",
+    "title": "Google Campus Drive Shortlist",
+    "message": "Congratulations! You have been shortlisted for the Google campus drive scheduled on Jan 20.",
+    "isRead": false,
+    "createdAt": "2024-01-15T08:00:00Z",
+    "metadata": { "companyId": "google-001", "driveDate": "2024-01-20" },
+    "priorityScore": 300.9615384615385
+  },
+  {
+    "id": "a1b2c3d4-0002-0002-0002-000000000002",
+    "studentId": "STU001",
+    "type": "Placement",
+    "title": "Amazon Drive Results",
+    "message": "Amazon drive results are out. Please check your portal.",
+    "isRead": false,
+    "createdAt": "2024-01-14T10:00:00Z",
+    "metadata": {},
+    "priorityScore": 300.043478260869565
+  },
+  {
+    "id": "a1b2c3d4-0003-0003-0003-000000000003",
+    "studentId": "STU001",
+    "type": "Result",
+    "title": "Semester 5 Results Published",
+    "message": "Your Semester 5 results have been published on the student portal.",
+    "isRead": false,
+    "createdAt": "2024-01-15T07:00:00Z",
+    "metadata": {},
+    "priorityScore": 200.9090909090909
+  },
+  {
+    "id": "a1b2c3d4-0004-0004-0004-000000000004",
+    "studentId": "STU001",
+    "type": "Event",
+    "title": "Hackathon Registration Open",
+    "message": "National Hackathon 2024 registration is now open. Register before Jan 18.",
+    "isRead": false,
+    "createdAt": "2024-01-14T12:00:00Z",
+    "metadata": {},
+    "priorityScore": 100.04
+  },
+  {
+    "id": "a1b2c3d4-0005-0005-0005-000000000005",
+    "studentId": "STU001",
+    "type": "General",
+    "title": "Library Closure Notice",
+    "message": "The main library will be closed on Jan 16 for maintenance.",
+    "isRead": false,
+    "createdAt": "2024-01-13T09:00:00Z",
+    "metadata": {},
+    "priorityScore": 0.020833333333333332
+  }
+]
