@@ -17,7 +17,7 @@ export const config = {
     port: parseInt(optional('DB_PORT', '5432'), 10),
     name: required('DB_NAME'),
     user: required('DB_USER'),
-    password: required('DB_PASSWORD'),
+    password: optional('DB_PASSWORD', ''),
   },
   redis: {
     url: optional('REDIS_URL', 'redis://localhost:6379'),
