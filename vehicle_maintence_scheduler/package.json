@@ -1,0 +1,27 @@
+{
+  "name": "vehicle-scheduling",
+  "version": "1.0.0",
+  "description": "Vehicle Maintenance Scheduler — Backend Evaluation",
+  "type": "module",
+  "main": "dist/server.js",
+  "scripts": {
+    "dev": "node --env-file=.env --import tsx/esm src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "schedule:vehicles": "node --env-file=.env --import tsx/esm src/schedule.ts",
+    "lint": "eslint src --ext .ts"
+  },
+  "dependencies": {
+    "axios": "^1.6.8",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.12.7",
+    "@types/uuid": "^9.0.8",
+    "tsx": "^4.7.3",
+    "typescript": "^5.4.5"
+  }
+}

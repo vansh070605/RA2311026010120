@@ -1,0 +1,30 @@
+{
+  "name": "notification-service",
+  "version": "1.0.0",
+  "description": "Campus Notification System — Backend Evaluation",
+  "type": "module",
+  "main": "dist/server.js",
+  "scripts": {
+    "dev": "node --env-file=.env --import tsx/esm src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "priority:inbox": "node --env-file=.env --import tsx/esm priority_inbox.ts",
+    "lint": "eslint src --ext .ts"
+  },
+  "dependencies": {
+    "axios": "^1.6.8",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-validator": "^7.1.0",
+    "pg": "^8.11.5",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.12.7",
+    "@types/pg": "^8.11.5",
+    "@types/uuid": "^9.0.8",
+    "tsx": "^4.7.3",
+    "typescript": "^5.4.5"
+  }
+}

@@ -1,0 +1,286 @@
+{
+  "info": {
+    "name": "Backend Evaluation",
+    "description": "Postman collection covering all evaluation endpoints",
+    "_postman_id": "assessment-eval-2024",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "notif_base", "value": "http://localhost:3002" },
+    { "key": "sched_base", "value": "http://localhost:3001" },
+    { "key": "token", "value": "your_token_from_env" }
+  ],
+  "item": [
+    {
+      "name": "Vehicle Scheduler",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "url": "{{sched_base}}/status",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Service running', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.status).to.include('running');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Run Vehicle Schedule — Happy Path",
+          "request": {
+            "method": "POST",
+            "url": "{{sched_base}}/schedule",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ]
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Returns array of depot results', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.success).to.be.true;",
+                  "  pm.expect(body.data).to.be.an('array');",
+                  "  if (body.data.length > 0) {",
+                  "    const depot = body.data[0];",
+                  "    pm.expect(depot).to.have.property('depotId');",
+                  "    pm.expect(depot).to.have.property('selectedTasks');",
+                  "    pm.expect(depot).to.have.property('totalDuration');",
+                  "    pm.expect(depot).to.have.property('totalImpact');",
+                  "    pm.expect(depot.selectedTasks).to.be.an('array');",
+                  "  }",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Notifications",
+      "item": [
+        {
+          "name": "List Notifications — Happy Path",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{notif_base}}/notifications?studentId=STU001&isRead=false&page=1&limit=20",
+              "host": ["{{notif_base}}"],
+              "path": ["notifications"],
+              "query": [
+                { "key": "studentId", "value": "STU001" },
+                { "key": "isRead", "value": "false" },
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" }
+              ]
+            },
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Response structure is valid', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.success).to.be.true;",
+                  "  pm.expect(body.data).to.be.an('array');",
+                  "  pm.expect(body).to.have.property('total');",
+                  "  pm.expect(body).to.have.property('page');",
+                  "  pm.expect(body).to.have.property('limit');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List Notifications — Invalid Query Params",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{notif_base}}/notifications?limit=999",
+              "host": ["{{notif_base}}"],
+              "path": ["notifications"],
+              "query": [{ "key": "limit", "value": "999" }]
+            },
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 400 for limit > 100', () => pm.response.to.have.status(400));",
+                  "pm.test('Returns validation errors', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.success).to.be.false;",
+                  "  pm.expect(body.errors).to.be.an('array').with.length.above(0);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Notification — Happy Path",
+          "request": {
+            "method": "POST",
+            "url": "{{notif_base}}/notifications",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"studentId\": \"STU001\",\n  \"type\": \"Placement\",\n  \"title\": \"Infosys Drive Shortlist\",\n  \"message\": \"You have been shortlisted for the Infosys campus drive.\",\n  \"metadata\": { \"companyId\": \"inf-001\" }\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 201', () => pm.response.to.have.status(201));",
+                  "pm.test('Returns created notification', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.success).to.be.true;",
+                  "  pm.expect(body.data.id).to.be.a('string');",
+                  "  pm.expect(body.data.isRead).to.be.false;",
+                  "  pm.expect(body.data.type).to.equal('Placement');",
+                  "  pm.environment.set('notif_id', body.data.id);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Notification — Invalid Type",
+          "request": {
+            "method": "POST",
+            "url": "{{notif_base}}/notifications",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"studentId\": \"STU001\",\n  \"type\": \"InvalidType\",\n  \"title\": \"Test\",\n  \"message\": \"Test message\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 400', () => pm.response.to.have.status(400));",
+                  "pm.test('Error about invalid type', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.success).to.be.false;",
+                  "  pm.expect(body.errors[0].msg).to.include('type');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Mark As Read — Happy Path",
+          "request": {
+            "method": "PATCH",
+            "url": "{{notif_base}}/notifications/{{notif_id}}/read",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('isRead is true', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.success).to.be.true;",
+                  "  pm.expect(body.data.isRead).to.be.true;",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Mark As Read — Not Found",
+          "request": {
+            "method": "PATCH",
+            "url": "{{notif_base}}/notifications/00000000-0000-0000-0000-000000000000/read",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 404', () => pm.response.to.have.status(404));",
+                  "pm.test('Error message present', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.success).to.be.false;",
+                  "  pm.expect(body.error).to.include('not found');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Notify All — Happy Path",
+          "request": {
+            "method": "POST",
+            "url": "{{notif_base}}/notifications/notify-all",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"Event\",\n  \"title\": \"Cultural Fest 2024\",\n  \"message\": \"Cultural Fest is on Jan 20. All students are invited!\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 202 Accepted', () => pm.response.to.have.status(202));",
+                  "pm.test('Returns queued count', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.success).to.be.true;",
+                  "  pm.expect(body.queued).to.be.a('number');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
